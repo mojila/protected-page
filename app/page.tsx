@@ -1,15 +1,27 @@
 'use client'
 
-import { useSession, signOut } from 'next-auth/react'
+import { useAuth } from './contexts/AuthContext'
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 
 export default function Home() {
-  const { data: session, status } = useSession({
-    required: true,
-    onUnauthenticated() {
-      // Redirect to login if not authenticated
-      window.location.href = '/login'
+  const { user, status, logout } = useAuth()
+  const router = useRouter()
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/login')
     }
-  })
+  }, [status, router])
+
+  if (status === 'unauthenticated') {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-lg">Redirecting to login...</div>
+      </div>
+    )
+  }
 
   if (status === 'loading') {
     return (
@@ -28,13 +40,13 @@ export default function Home() {
         <div className="text-center">
           <h1 className="text-3xl font-bold text-gray-900 mb-4">Protected Page</h1>
           <p className="text-gray-600 mb-6">
-            Welcome, {session?.user?.name || 'User'}!
+            Welcome, {user?.name || 'User'}!
           </p>
           <p className="text-sm text-gray-500 mb-6">
             This page is protected by authentication middleware.
           </p>
           <button
-            onClick={() => signOut({ callbackUrl: '/login' })}
+            onClick={logout}
             className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
           >
             Sign Out

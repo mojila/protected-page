@@ -1,9 +1,9 @@
 'use client'
 
-import { useSession } from 'next-auth/react'
+import { useAuth } from '../contexts/AuthContext'
 
 export default function TestSessionPage() {
-  const { data: session, status } = useSession()
+  const { user, status } = useAuth()
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4">
@@ -11,9 +11,9 @@ export default function TestSessionPage() {
         <h1 className="text-2xl font-bold mb-4">Session Test</h1>
         <div className="space-y-2">
           <p><strong>Status:</strong> {status}</p>
-          <p><strong>User:</strong> {session?.user?.name || 'Not logged in'}</p>
-          <p><strong>Email:</strong> {session?.user?.email || 'N/A'}</p>
-          <p><strong>Session ID:</strong> {session?.user?.id || 'N/A'}</p>
+          <p><strong>User:</strong> {user?.name || 'Not logged in'}</p>
+          <p><strong>Email:</strong> {user?.email || 'N/A'}</p>
+          <p><strong>User ID:</strong> {user?.id || 'N/A'}</p>
         </div>
         
         {status === 'loading' && (
@@ -25,13 +25,13 @@ export default function TestSessionPage() {
         
         {status === 'unauthenticated' && (
           <div className="mt-4 text-red-600">
-            ❌ Not authenticated - SessionProvider is working!
+            ❌ Not authenticated - Custom auth is working!
           </div>
         )}
         
         {status === 'authenticated' && (
           <div className="mt-4 text-green-600">
-            ✅ Authenticated - SessionProvider is working!
+            ✅ Authenticated - Custom auth is working!
           </div>
         )}
       </div>

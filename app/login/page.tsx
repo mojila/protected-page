@@ -1,6 +1,6 @@
 'use client'
 
-import { signIn, useSession } from 'next-auth/react'
+import { useAuth } from '../contexts/AuthContext'
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
@@ -13,7 +13,7 @@ type FormData = {
 export default function LoginPage() {
   const [error, setError] = useState('')
   const router = useRouter()
-  const { data: session, status } = useSession()
+  const { user, status, login } = useAuth()
   const {
     register,
     handleSubmit,
@@ -52,16 +52,12 @@ export default function LoginPage() {
     setError('')
 
     try {
-      const result = await signIn('credentials', {
-        username: data.username,
-        password: data.password,
-        redirect: false,
-      })
-
-      if (result?.error) {
-        setError('Invalid credentials')
-      } else {
+      const success = await login(data.username, data.password)
+      
+      if (success) {
         router.push('/')
+      } else {
+        setError('Invalid credentials')
       }
     } catch (error) {
       setError('An error occurred')
