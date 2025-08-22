@@ -47,7 +47,7 @@ export default function LoginPage() {
             Sign in to your account
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Use username and password: <strong>admin</strong>
+            Use username and password: <strong>user@example.com | user</strong>
           </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
