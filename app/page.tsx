@@ -3,15 +3,24 @@
 import { useSession, signOut } from 'next-auth/react'
 
 export default function Home() {
-  const { data: session, status } = useSession()
+  const { data: session, status } = useSession({
+    required: true,
+    onUnauthenticated() {
+      // Redirect to login if not authenticated
+      window.location.href = '/login'
+    }
+  })
 
   if (status === 'loading') {
     return (
       <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
         <div className="text-lg">Loading...</div>
       </div>
     )
   }
+
+
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">

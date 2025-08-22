@@ -1,9 +1,9 @@
 'use client'
 
-import { signIn } from 'next-auth/react'
+import { signIn, useSession } from 'next-auth/react'
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 type FormData = {
   username: string
@@ -13,11 +13,40 @@ type FormData = {
 export default function LoginPage() {
   const [error, setError] = useState('')
   const router = useRouter()
+  const { data: session, status } = useSession()
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<FormData>()
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (status === 'authenticated') {
+      router.push('/')
+    }
+  }, [status, router])
+
+  // Show loading while checking authentication status
+  if (status === 'loading') {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+          <div className="text-lg">Loading...</div>
+        </div>
+      </div>
+    )
+  }
+
+  // Don't render login form if authenticated
+  if (status === 'authenticated') {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-lg">Redirecting...</div>
+      </div>
+    )
+  }
 
   const onSubmit = async (data: FormData) => {
     setError('')

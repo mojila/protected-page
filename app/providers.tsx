@@ -1,18 +1,16 @@
 'use client'
 
 import { SessionProvider } from 'next-auth/react'
-import { useEffect, useState } from 'react'
+import { ReactNode } from 'react'
 
-export function Providers({ children }: { children: React.ReactNode }) {
-  const [mounted, setMounted] = useState(false)
+interface ProvidersProps {
+  children: ReactNode
+}
 
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  if (!mounted) {
-    return <>{children}</>
-  }
-
-  return <SessionProvider>{children}</SessionProvider>
+export function Providers({ children }: ProvidersProps) {
+  return (
+    <SessionProvider refetchInterval={0} refetchOnWindowFocus={false}>
+      {children}
+    </SessionProvider>
+  )
 }
